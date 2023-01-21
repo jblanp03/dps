@@ -3,7 +3,10 @@
 
 Proyecto final de la asignatura.
 
-
+- ./DPS-Práctica Final: se encuentra la plantilla de LaTex utilizada con las figuras y los esquemas.
+- ./Presentación: Se encuentra la presentación en PowerPoint
+- ./Questionaire: Se encuentra el cuestionario VSAQ cumplimentado.
+- JorgeBlancoPrieto
 
 A través del siguiente enlace se puede acceder la carpeta DPS compartida en Drive donde se encuentra la presentación del trabajo y el powerpoint
 
