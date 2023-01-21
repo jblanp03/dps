@@ -1,0 +1,3 @@
+/home/muic/Escritorio/MUIC/lab2-unit-tests-jblanp03/CMakeFiles/rebuild_cache.dir
+/home/muic/Escritorio/MUIC/lab2-unit-tests-jblanp03/CMakeFiles/edit_cache.dir
+/home/muic/Escritorio/MUIC/lab2-unit-tests-jblanp03/CMakeFiles/runTests.dir

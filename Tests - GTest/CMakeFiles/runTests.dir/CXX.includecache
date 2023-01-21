@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/muic/Escritorio/MUIC/lab2-unit-tests-jblanp03/exampleFunction.cpp
+math.h
+-
+limits.h
+-
+stdio.h
+-
+stdint.h
+-
+
+/home/muic/Escritorio/MUIC/lab2-unit-tests-jblanp03/tests.cpp
+exampleFunction.cpp
+/home/muic/Escritorio/MUIC/lab2-unit-tests-jblanp03/exampleFunction.cpp
+limits.h
+-
+gtest/gtest.h
+-
+
