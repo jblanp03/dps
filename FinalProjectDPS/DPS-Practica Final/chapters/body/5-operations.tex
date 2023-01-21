@@ -1,0 +1,32 @@
+\chapter{Operaciones}
+\label{chap:operations}
+
+\section{Introducción}
+
+En la presente sección se realiza un análisis de las operaciones enfocado en el asistente virtual. Para ello se reevisa el estado actual de esta herramienta y se indican buenas prácticas que han de ser tomadas para mejorar la seguridad de la aplicación.
+
+
+\section{Estado actual}
+
+Actualmente, la herramienta se encuentra desplegada aunque no ha sido entregada al cliente. El servicio web está montado en un entorno de producción aunque está en fase de aceptación (pruebas) por parte del cliente.
+\begin{itemize}
+    \item Entorno de preproducción: Entorno idéntico al entorno de producción donde se realizan pruebas previas a su despliegue. En este caso no existe dicho entorno y las pruebas se ejecutan en un entorno de desarrollo.
+    \item Entorno de desarrollo: El entorno de desarrollo es un entorno donde los desarrolladores realizan pruebas en local antes de desplegar la aplicación. Se utiliza este entorno como fase previa al entorno de producción.
+    \item Entorno de producción: Entorno real donde se va a desplegar la aplicación. Se está utilizando este entorno cuando se comprueba que la aplicación funciona en el entorno de desarrollo.
+    \item Entorno de pruebas: No existe un entorno destinado a las pruebas. Todas las pruebas se realizan en el entorno de desarrollo a partir de la última versión del entorno de producción.
+    \item Lanzamiento, despliegue y monitorización: No existe ninguna guía para realizar ninguna de las tres acciones. Existe monitorización del asistente, pero no una guía para proceder.
+\end{itemize}
+
+\section{Problemas encontrados y buenas prácticas}
+
+En esta sección se comentarán prácticas aconsejables que han sido detectadas a partir de los problemas encontrados en la operatividad de este proyecto:
+
+\begin{itemize}
+    \item Auditorías: Se recomendaría realizar autorías de la aplicación de forma periódica, por los propios participantes o equpo de proyecto y por un agente profesional externo para tener una visión global del proyecto.
+    \item Entorno de preproducción: El entorno de preproducción es inexistente. Se está utilizando el entorno de desarrollo como paso previo a producción y debería existir un entorno de condiciones similares al entorno de producción, de modo que se pueda testear la aplicación previo a su despliegue.
+    \item Manual de programador y guías de despliegue: El proyecto carece de una extensa documentación desde un punto de vista de desarrollo y de despliegue. Si surge un error postproyecto y debe solucionarlo un nuevo integrante del equipo, tendría muy complicada esta labor. No tendría suficiente información de cómo poder desplegar una nueva versión. Como método urgente, se debe crear una guía de despliegue.
+
+\end{itemize}
+
+
+

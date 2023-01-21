@@ -1,0 +1,227 @@
+\chapter{Implementación}
+\label{chap:implementation}
+
+
+
+\section{Introducción}
+
+
+En el presente capítulo se describen los puntos más importantes de la implementación del asistente virtual: tecnologías utilizadas, pseudocódigo, código fuente y librerías utilizadas. Posteriormente se mostrarán los posibles riesgos y problemas encontrados y las soluciones propuestas.
+
+\section{Tecnologías utilizadas}
+
+El asistente virtual se materializa en un plugin que inicialmente se iba a instalar en la web del centro, aunque posteriormente y con el fin de reducir la exposición del asistente al público en general, se ha desplegado en una web estática destinada únicamente para el asistente virtual. A esta web se puede entrar por búsqueda en internet, a partir de un link dentro de la web del centro o bien por el código QR que se les proporcionó a los estudiantes. El asistente virtual consta de varias partes: backend del asistente, microservicio de python, base de datos y frontend.
+
+\subsection{Asistente virtual}
+
+Tal y como se ha comentado recientemente, el plugin del asistente es una aplicación web que se divide en dos partes: backend y frontend. El frontend es el diseño web que el usuario visualiza a través de su dispositivo de acceso, mientras que el backend es donde se realizan toda la lógica de negocio y/o procesos necesarios para establecer un correcto funcionamiento y comunicación.
+
+\subsubsection{Backend}
+
+El backend del asistente virtual se ha desarrollado en el entorno de ejecución Node.js v18.2.0. Node.js es un entorno de tiempo de ejecución de JavaScript de backend que se ejecuta en el motor JavaScript V8. Se ha utilizado Node.js debido a que:
+\begin{itemize}
+    \item Gran comunidad open-source.
+    \item El equipo de desarrollo backend es el lenguaje al que se encuentran más acostumbrados.
+    \item Node.js tiene una arquitectura basada en eventos capaz de E/S asíncrona lo que permite optimizar el rendimiento y la escalabilidad en aplicaciones web con muchas operaciones de entrada/salida. Esta característica es muy útil en comunicaciones en tiempo real (punto clave en el proyecto).
+\end{itemize}
+
+
+\subsubsection{Frontend}
+
+El frontend del asistente se ha realizado mediante el framework de JavaScript de código abierto Vue.js v3.0.1 (última versión estable que corresponde con Octubre de 2020). Los componentes de Vue.js extienden los elementos básicos de HTML para encapsular el código reutilizable. En un nivel alto, los componentes son elementos persoanlizados a los que el compilador de Vue adjunta comportamiento. Vue.js utiliza una sintaxis de plantilla basada en HTML que permite vincular el DOM (Documento Object Model - interfaz de plataforma) a los datos de la instancia subyacente. Vue.js permite que en un mismo fichero se pueda incluir el código de HTML, CSS y JavaScript. El uso de este framework está muy extendido (al igual que la pareja node.js para el backend y vue.js para el frontend) y principalmente se ha utilizado por su rápida curva de aprendizaje.
+
+
+\subsection{Microservicio Python}
+
+La lógica del asistente virtual viene dada a partir del lenguaje de programación Python v3.10.4. En Python se ha creado un microservicio que, mediante socket se comunica con la API de Node.js. Python recibe la petición del usuario a través de Node.js, procesa la petición y envia una respuesta para que Node.js se comunique con el frontend. Python es un lenguaje de programación de propósito general y alto nivel, muy extendido para crear asistentes virtuales y el desarrollo de algoritmos de Procesamiento Natural del Lenguaje o NLP. En este proyecto no fue requerido crear o desarrollar un algoritmo de NLP dado que las respuestas del asistente viene preconfigurada por el flujo de seguimiento.
+
+
+\section{Pseudocódigo}
+
+La ejecución del asistente virtual sigue la siguiente secuencia:
+
+\begin{enumerate}
+    \item Se lee el código introducido por el usuario en la web del asistente virtual.
+    \item Se comprueba si el código proporcionado coincide con algún código de la base de datos y si hay respuestas asociadas al código introducidas por los profesores del centro a través de otro software.
+    \item Si el código no existe o el código existe, pero no hay respuestas asociadas:
+\begin{enumerate}
+        \item El asistente virtual avisa que sus respuestas no están introducidas en la base de datos y finaliza el proceso.
+\end{enumerate}
+    \item Si el código existe, pero ya existe una conversación previa entre el asistente virtual y el usuario:
+\begin{enumerate}
+        \item El asistente virtual avisa que sus opiniones han sido registradas con éxito y finaliza el proceso.
+\end{enumerate}
+    \item Si el código proporcionado por el alumno existe, las respuetas están registradas y tiene asociado un tipo de flujograma:
+\begin{enumerate}
+        \item El asistente virtual proporciona un mensaje de bienvenida y comienza el flujo de preguntas y respuestas por parte del usuario.
+        \item El backend envía al microservicio de Python el mensaje recibido por parte del usuario.
+        \item El microservicio de Python procesa la consulta del usuario y devuelve el siguiente nodo del flujograma.
+        \item El backend lo envía al frontend y se visualiza en el plugin de la ventana de chat del asistente.
+        \item Este proceso se repite hasta que se finalice el flujo de preguntas y respuestas.
+\end{enumerate}
+    \item El usuario tiene la opción de evaluar la labor del asistente virtual.
+    \item El asistente virtual se despide y se cierra el proceso.
+\end{enumerate}
+
+Si el usuario volviera a repetir el proceso de evaluación, el asistente virtual le avisaría, por lo que este proceso únicamente se puede ejecutar una vez en su totalidad. De este modo se evita que un usuario replique sus respuestas y altere la veracidad de las opiniones.
+
+
+\section{Código fuente}
+
+En esta sección se desglosa el código fuente del programa. Se dividen en tres partes aunque en el entorno de producción los archivos de Python se encuentran en el mismo esqueleto que los archivos del backend de node.js. Por otro lado, al utilizar archivo de compilación del frontend, el frontend se reduce a la carpeta /dist. Se expondrá la estructura utilizada en el desarrollo de la aplicación:
+
+\subsection{Backend}
+
+En el backend se encuentran los siguientes directorios compuestos de los ficheros:
+
+\begin{itemize}
+    \item ./config: Directorio donde se encuentra la configuración del proyecto.
+\begin{itemize}
+        \item db.config.js: Archivo que tiene la configuración de la base de datos y sus credenciales.
+\end{itemize}
+    \item ./controllers: Directorio donde se encuentran los controladores (métodos de la API), encargados de unir el Model y View.
+\begin{itemize}
+        \item chatbot.controller.js: Archivo que se compone de la lógica para discernir si el código introducido por el usuario está registrado, tiene conversación asociada o tiene que llamar al Python para comenzar con el flujo de la conversación.
+        \item tipo.controller.js: Archivo que en base a los resultados de las encuestas escritos en clase y registradas por el centro, calcula el tipo de flujograma que debe seguir el usuario.
+\end{itemize}
+    \item ./dist: Compilación del frontend
+    \item ./models: Directorio donde se encuentran los modelos utilizados para la subida de datos a la base de datos:
+\begin{itemize}
+        \item chat.model.js: Archivo que tiene la estructura de la tabla de la base de datos correspondiente con el chat.
+        \item tipo.model.js: Define el tipo de los usuarios
+        \item user.model.js: Define el usuario correspondiente por el código proporcionado
+\end{itemize}
+    \item ./routes: Directorio con los métodos HTTP (GET, POST, PUT, DELETE) para la comunicación.
+    \item ./node-modules: Directorio con las librerías utilizadas.
+    \item ./python: Directorio con los archivos para montar el microservicio de Python, véase 4.4.2.
+    \item server.js: Archivo que crea el servidor.
+    \item app.js: Archivo que contiene la conexión con la base de datos y se definen los modelos y las rutas.
+    \item socket.js: Archivo que establece la comunicación con el microservicio de Python (lógica) mediante socket.io.
+    \item package.json: Información del proyecto así como enumeración de las dependencias utilizadas.
+\end{itemize}
+
+
+\subsection{Python}
+
+En el microservicio de Python se encuentran los siguientes archivos:
+
+\begin{itemize}
+    \item chatbot.py: Archivo "\_\_main\_\_" que ejecuta el servicio de Python. Contiene los métodos para la comunicación con Node.js.
+    \item chatbot\_h.py: Archivo que tiene la clase utilizada para definir el flujograma y las funciones lógicas del asistente.
+    \item input\_data.pyt: Archivo que tiene la secuencia del flujograma y las respuestas preprogramadas.
+\end{itemize}
+
+
+\subsection{Frontend}
+
+Por parte del frontend, se mencionan los archivos que dan vida al plugin del asistente y a su web estática:
+
+\begin{itemize}
+    \item ./public: Directorio donde se encuentran imágenes utilizadas (icono del plugin del asistente, index.html).
+    \item ./src: Directorio donde se encuentran los componentes de vue.
+\begin{itemize}
+        \item ./assets: Directorio donde se encuentran los assets utilizados.
+        \item ./components: Directorio con los componentes de Vue.js
+\begin{itemize}
+            \item iconChatbot.vue: Archivo que constituye el plugin del asistente virtual y su ventana de chat.
+\end{itemize}
+        \item App.vue: Template que lanza la aplicación.
+        \item main.js: Archivo JavaScript que comunica con la API por socket y renderiza App.vue
+\end{itemize}
+\end{itemize}
+
+
+\section{Librerías utilizadas}
+
+
+\begin{table}[ht]
+\begin{centering}
+\begin{tabular}{|>{\centering}p{0.3\textwidth}|>{\centering}p{0.3\textwidth}|l|}
+\hline
+Librería & Versión utilizada en el proyecto & Versión actual \\ \hline
+bcryptjs  &  2.4.3 &  2.4.3 \\ \hline
+cors  &  2.8.5 &  2.8.5 \\ \hline
+express  &  4.18.1 &  4.18.2 \\ \hline
+jsonwebtoken  &  8.5.1 &  9.0.0 \\ \hline
+jssha  &  3.2.0 &  3.3.0 \\ \hline
+mysql2  &  2.3.3 &  3.0.1 \\ \hline
+request-promise  &  4.2.6 &  4.2.6  \\ \hline
+sequelize  &  6.24.0 &  6.28.0  \\ \hline
+socket.io  &  2.1.1 &  4.5.4 \\ \hline
+\end{tabular}
+\caption{Tabla con las librerías de Node.js utilizadas en este proyecto}
+\end{centering}
+\end{table}
+
+Hay que tener en cuenta que el paquete: 'request-promise' se encuentra 'deprecated'.
+
+\begin{table}[ht]
+\begin{centering}
+\begin{tabular}{|>{\centering}p{0.3\textwidth}|>{\centering}p{0.3\textwidth}|l|}
+\hline
+Librería & Versión utilizada en el proyecto & Versión actual \\ \hline
+@codekraft-studio/vue-record  & 0.0.3 &  0.0.3 \\ \hline
+@mdi/font  &  6.7.96 & 7.1.96 \\ \hline
+axios  &  0.26.0 & 3.5.2 \\ \hline
+core-js  &  3.1.3 & 3.27.2 \\ \hline
+express  &  4.18.1 &  4.18.2 \\ \hline
+jquery  &  3.6.0 & 3.6.3 \\ \hline
+p5  &  1.4.1 & 1.5.0 \\ \hline
+vue-icon  &  2.2.0 & 2.3.0 \\ \hline
+vue-p5  &  0.8.4 & 0.8.4 \\ \hline
+vue-socket.io  & 3.0.10 & 3.0.10 \\ \hline
+vue-sound  &  0.0.4 & 0.0.4 \\ \hline
+vuetify-audio  &  0.3.3 & 0.3.3 \\ \hline
+\end{tabular}
+\caption{Tabla con las librerías de Vue.js utilizadas en este proyecto}
+\end{centering}
+\end{table}
+
+
+
+\begin{table}[ht]
+\begin{centering}
+\begin{tabular}{|>{\centering}p{0.3\textwidth}|>{\centering}p{0.3\textwidth}|l|}
+\hline
+Librería & Versión utilizada en el proyecto & Versión actual \\ \hline
+Flask & 2.2.2 & 2.2.2 \\ \hline
+numpy & 1.21.5  & 1.24.1  \\ \hline
+joblib  & 1.1.0  & 1.2.0   \\ \hline
+ujson & 5.4.0 & 5.7.0   \\ \hline
+\end{tabular}
+\caption{Tabla con las librerías de Python utilizadas en este proyecto}
+\end{centering}
+\end{table}
+
+
+
+\section{Problemas encontrados}
+
+Con respecto a la implementación, estructura del código y uso de librerías del presente proyecto se han señalado los siguientes problemas:
+
+\begin{itemize}
+     \item Librerías 'deprecated': Hay librerías que se han quedado en una versión, como por ejemplo request-promise de los paquetes utilizados para el backend de Node.js que se encuentran deprecated y ya no está soportada dicha versión.
+    \item Librerías no actualizadas: A pesar de que las versiones utilizadas no se alejan de las versiones actuales dado que el proyecto es actual, hay alguna librería que se utiliza una versión muy antigua, como por ejemplo en el backend 'socket.io' cuya versión actual es 4.5.4 y la utilizada es 2.1.1 y no se encuentra documentado de por qué razón puede ser.
+    \item Librerías no utiliazadas: A lo largo del código hay librerías que se han declarado, pero no se han utilizado. Esto denota poco control sobre el código que se ha desarrollado.
+    \item Ficheros con contraseñas: El fichero db.config.js contiene la contraseña (usuario y contraseña) de la base de datos. Es verdad que se requieren declarar, pero se encuentran dentro del fichero hardcodeadas.
+    \item Código: El código no tiene una estructura seguida por la guía de estilos de cada lenguaje de programación.
+\end{itemize}
+
+
+\section{Soluciones propuestas}
+
+Para los anteriores problemas encontrados, se proponen las siguientes soluciones:
+
+\begin{itemize}
+     \item Librerías 'deprecated': Hay librerías que no están en uso. Se deberían buscar alguna alternativa de estas librerías.
+    \item Librerías no actualizadas: Aquellas librerías que estén desactualizadas deberían actualizarse de forma periódica.
+    \item Librerías no utiliazadas: Se deberían eliminar las referencias de aquellas librerías que están definidas en el código y no se hace uso de ellas.
+    \item Ficheros con contraseñas: Se deberían evitar hardcodear las contraseñas de unión a la base de datos dentro de los ficheros de código.
+    \item Código: El código no tiene una estructura seguida por la guía de estilos de cada lenguaje de programación.
+\end{itemize}
+
+
+
+
+
+

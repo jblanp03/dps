@@ -1,0 +1,195 @@
+\chapter{Diseño}
+\label{chap:Design}
+
+
+\section{Introducción}
+
+En este apartado se aborda el diseño del sistema del asistente virtual. Al igual que la arquitectura, el diseño es una de las secciones más importantes en el desarrollo de un proyecto. El diseño refleja las necesidades y requerimientos del cliente, además de una solución borrador del desarrollo que se debe llevar a cabo. Un mal diseño, y una mala arquitectura, pueden derivar en futuros fallos del sistema, desde fallos por parte de los usuarios finales, fallos en la implementación e incluso en desviaciones del proyecto. 
+
+Para analizar el diseño se han especificado las necesidades del proyecto, identificado los grupos stakeholders principales y definidos los requisitos de funcionalidad y de usuario. Además, se introduce una sección de realizabilidad que corresponde con posibles riesgos en la implementación.
+
+
+\section{Necesidades del proyecto}
+
+Una parte importante de la ingeniería de requisitos es establecer las necesidades de las partes interesadas, encargada de documentar y mantener los intereses de los stakeholders pertenecientes al sistema:
+
+\begin{itemize}
+    \item ICU-0: Establecer comunicación con el asistente virtual en un servicio web.
+    \item ICU-1: El asistente virtual debe ser proactivo y comenzar la conversación cuando un usuario acceda al servicio web.
+    \item ICU-2: Los usuarios deben poder entablar conversación a partir de un código o bien accediendo mediante un código QR.
+    \item ICU-3: Los usuarios deben ser anónimos.
+    \item ICU-4: Las conversaciones deben ser almacenadas de forma anónima.
+    \item ICU-5: El asistente virtual debe establecer flujos de preguntas en función de las respuestas de las encuentas de los usuarios.
+\end{itemize}
+
+Dentro del proyecto se pueden definir dos grupos interesados, aunque a nivel de uso del asistente, únicamente el grupo B es el interesado:
+\begin{itemize}
+    \item Grupo A: Centro que proporciona el curso. Este tipo de grupo interesado necesita conocer opiniones de los alumnos más detalladas que con la encuesta para poder ofrecer mejores servicios.
+    \item Grupo B: Usuario alumno. Este tipo de usuario corresponde con los usuarios que acceden a la aplicación y pueden conversar con el asistente virtual. A su vez, este grupo podría desagregarse en varios tipos de usuarios alumnos que varían en función de las encuestas que previamente habrían rellenado en el centro:
+    \begin{itemize}
+        \item Usuario grupo nivel 0
+        \item Usuario grupo nivel 1
+        \item Usuario grupo nivel 2
+        \item Usuario grupo nivel 4
+    \end{itemize}
+
+Dada la identificación de este grupo, los usuarios se pueden dividir por niveles cuyas variaciones corresponden con las respuestas de la encuesta (grado de satisfacción). El asistente virtual identificará a qué grupo pertenece cada usuario previo a lanzar el flujo guiado de preguntas; no obstante, la forma de utilizar este asistente es igual para cualquier grupo de usuarios.
+
+\end{itemize}
+
+
+
+
+
+
+
+
+\section{Requisitos del proyecto}
+
+En esta sección se exponen, evalúan y priorizan los requisitos de usuario del sistema del asistente virtual para transformarlos en una descripción funcional y técnica. El objetivo de esta fase es refinar los requisitos de usuario definidos en la sección anterior, eliminar ambigüedades y traducirlos al lenguaje técnico. Los requisitos se agrupan en categorías según el modelo FURPS \cite{furps:2010}:
+
+\begin{itemize}
+    \item Requisitos de funcionalidad (RF): cómo funciona el sistema.
+    \item Requisitos de usabilidad (RU): conceptos de uso.
+    \item Requisitos de fiabilidad (RFi): detallan la frecuencia y gravedad de los fallos, así como la capacidad de recuperación.
+    \item Requisitos de rendimiento (RR): imponen condiciones a los requisitos funcionales.
+    \item Requisitos de soporte (RS): extensibilidad y configurabilidad.
+\end{itemize}
+
+Los requisitos que afectan al sistema se pueden indicar mediante la etiqueta "Requisito crítico". En las tablas de la sección Requisitos de usuario se detallan los requisitos del sistema. Cada tabla, sin contar la tabla 3.1, corresponde a un nivel de requisitos. Así, en la tabla 3.2 están los requisitos de nivel 0 y en la tabla 3.3 los definidos como nivel 1:
+
+
+\begin{itemize}
+    \item ID: Identificador único del requisito, siguiendo las reglas especificadas en la introducción y que permite hacer la relación entre requisitos de niveles diferentes.
+    \item Nombre del requisito: nombre específico del requisito.
+    \item Descripción: descripción completa del requisito.
+    \item Justificación: causas que justifican el requisito.
+    \item Prioridad (P):
+    \begin{itemize}
+        \item Alta (A): debe completarse.
+        \item Media (M): si no entra en conflicto con otros requisitos y hay suficientes, debe cumplirse.
+        \item Baja (B): si es posible, se incluirá en el diseño, ya sea desde el principio o como una futura ampliación.
+    \end{itemize}
+    \item Verificación (V): método de verificación que se utilizará para garantizar su cumplimiento.
+    \begin{itemize}
+        \item Inspección (I): Examen visual (puede ser automático) que proporciona evidencia de que el requisito se ha cumplido, sin necesidad de ningún procedimieinto de ensayo específico.
+        \item Ensayo (E): Procedimiento específico diseñado para comprobar el funcionamiento del sistema o los parámetros constructivos y determinar el cumplimiento de los requisitos.
+        \item Demostración (D): El sistema se pone en funcionamiento para demostrar que cumple el requisito. Puede realizarse una o varias veces y documentarse.
+        \item Análisis (An): Suele realizarse cuando no es posible ningún otro análisis. Un experto analiza el sistema o parte, junto con los elementos con los que interactúa, y determina si cumplen los requisitos, emitiendo un informe final.
+    \end{itemize}
+    \item Necesidad del usuario de la que se deriva dicho requisito (NU).
+\end{itemize}
+
+\subsection{Requisitos de usuario}
+
+En esta sección se detallan los requisitos de usuario del sistema en función de la terminología expuesta.
+
+Posteriormente se establecen las necesidades de usuario cuyos requerimientos particulares se encuentran descritos en la TABLA teniendo en cuenta los grupos interesados:
+
+
+\begin{table}[ht]
+\begin{centering}
+\begin{tabular}{|l|>{\centering}p{0.70\textwidth}|l|}
+\hline
+ID & Necesidades del usuario & Grupo de pertenencia \\ \hline
+NU-1 &  El usuario debe poder establecer comunicación con el asistente virtual en un servicio web & Grupo B \\ \hline
+NU-2 &  El usuario debe poder acceder al servicio web desde PC y/o desde dispositivos móviles &  Grupo A / Grupo B \\ \hline
+NU-3 &  El asistente virtual debe iniciar la conversación con el usuario cuando este acceda al servicio web & Grupo B \\ \hline
+NU-4 &  Los usuarios deben poder comenzar la conversación a través de un código proporcionado por el centro &  Grupo A / Grupo B \\ \hline
+NU-5 & El asistente virtual debe diferenciar el alumno y clasificarlo según tipo de flujo a seguir en la conversación &  Grupo A \\ \hline
+NU-6 &  El asistente virtual debe poder conectarse con la base de datos en todo momento & - \\ \hline
+NU-7 & De cara al sistema los usuarios serán anónimos &  Grupo A \\ \hline
+NU-8 & Todos los datos han de ser registrados en la base de datos &  Grupo A \\ \hline
+\end{tabular}
+\caption{Identificación de las necesidades del usuario asociados a los grupos de referencia}
+\end{centering}
+\end{table}
+
+
+
+\subsection{Requisitos del sistema}
+
+Una vez detallados los requisitos generales en función de las necesidades del usuario, se detallan en la tabla 3.2 los requisitos de nivel 0 y la tabla 3.3 que corresponde con los requisitos más detallados de nivel 1. Las tablas se pueden observar al final del presente capítulo.
+
+
+
+
+
+
+
+\section{Realizabilidad}
+
+En esta sección se exponen los posibles riesgos que pueden llegar a surgir en un entorno de producción con el desarrollo expuesto. Esta parte es necesaria para entender la madurez de la propuesta del proyecto:
+
+\begin{itemize}
+    \item La conversación del asistente virtual debe ser una conversación asistida de flujo guiado. Esto en gran parte se debe a la necesidad del usuario del grupo A (centro) porevitar errores de un asistente conversacional (conversación general, sin flujo) y rapidez y optimización en el flujo de preguntas para evitar generar rechazo. No obstante, otro motivo fundamental es la falta de datos históricos de conversaciones o de un dataset. Las conversaciones guiadas son cerradas y obliga al usuario a responder cuestiones acerca del tema tratado por el asistente. Como se ha mencionado y resultando ventajoso, esto permite minimizar los posibles fallos de entendimiento. Sin embargo, permitir que el usuario tenga un campo de texto para responder al usuario puede sentirse perdido. Es por ello por lo que se recomienda evitar en la mayoría de lo posible que el usuario utilice el campo de texto haciendo interactivo el chat del asistente y ofreciendo al usuario opciones de respuestas que con hacer click se pueda responder.
+
+\end{itemize}
+
+
+
+
+\section{Problemas encontrados}
+
+En esta sección se tratarán de exponer los problemas encontrados o posibles riesgos existentes durante la definición y diseño del proyecto.
+\begin{itemize}
+    \item Documentación: Falta de documentación del diseño del sistema. La documentación existente no está conectada en un libro de proyecto y no está actualizada.
+    \item Nuevo integrante del equipo de desarrollo: Un problema encontrado es la integración de un nuevo miembro del equipo técnico como sustituto de otro técnico o como ampliación del equipo. Este puede suponer un problema desde un punto de vista de implementación, desarrollo y mantenimiento del software, dado que no hay documentación. Las consecuencias pueden ser desde empeoramiento de la calidad del código, hasta largos plazos de entrega de nuevas versiones y/o modificaciones, además de existir la posibilidad de generar errores involuntarios.
+    \item Librerías de terceros: Se ahondará en este tema en el capítulo 4, pero existe un riesgo de uso de librerías no actualizadas.
+    \item Equipo técnico desidentificado: El equipo técnico participante del proyecto puede llegar a no identificarse con el proyecto en sí, concluyendo en un desconocimiento de para qué sirve lo que están desarrollando. Esto puede originar en errores, largos periodos de desarrollo y/o modificaciones por equivocaciones y no entendimiento del proyecto, etc.
+    \item Archivo de logs: Este riesgo existe por la falta de un arachivo de logs y en caso de existir un problema dentro del sistema, no quedaría registrado.
+\end{itemize}
+
+
+\section{Soluciones propuestas}
+Dados los problemas y/o riesgos encontrados en la sección 3.5, se proponen las siguientes soluciones:
+\begin{itemize}
+   \item Documentación: Redactar una documentación detallada del proyecto, así como de su desarrollo y modificaciones. También se puede redactar un libro del proyecto que agrupe todos estos informes y las actualizaciones que se llevan a cabo.
+    \item Librerías de teceros: Al igual que se propone en el capítulo 4, una solución es revisar de manera periódica la versión de las librerías y su documentación por si existen vulnerabilidades.
+    \item Equipo técnico desidentificado: Se debería tener reuniones de inicio de proyecto para explicar en qué consiste el proyecto y reuniones periódicas para que todo el equipo participante esté enterado de las actualizaciones/cambios y desarrollo del mismo.
+    \item Nuevo integrante en el equipo de desarrollo: Con el punto de la documentación, este aspecto dejaría de ser un posible riesgo, dado que el nuevo integrante tendría documentación de apoyo.
+    \item Archivo de logs: Añadir un sistema (archivo) de logs para recoger la historia de la aplicación web. Este es un punto importante en el momento de puesta en un entorno de producción.
+\end{itemize}
+
+
+
+\begin{table}[ht]
+\begin{centering}
+\begin{tabular}{|l|>{\centering}p{0.19\textwidth}|>{\centering}p{0.16\textwidth}|>{\centering}p{0.16\textwidth}|>{\centering}p{0.03\textwidth}|>{\centering}p{0.16\textwidth}|l|}
+\hline
+ID & Nombre del requisito & Descripción & Justificación & P & V & NU \\ \hline
+RF-0&  (Requisito crítico) Comunicación bidireccional entre los usuarios y el asistente virtual & La aplicación web debe permitir comunicación bidireccional  & Es un sistema de pregunta y respuesta  & A & T - Realizar conversaciones entre ambas partes para probar que la comunicación se realiza correctamente & NU-0 \\ \hline
+RF-1&  El acceso al asistente virtual debe ser mediante un web service & Web service  & Acceso a través de internet  & A & I - Utilizar un navegador web para acceder una vez sea desplegado & NU-1 \\ \hline
+RF-3 &  El asistente virtual debe poder activarse a partir de la lectura de QRs & A los alumnos del centro se les proporcionará un código en formato texto y en QR con acceso al servicio web  & Mejora de la experiencia de usuario  & A & An - Realizar un proceso de prueba para verificar la correlación del alumno  & \\ \hline
+RU-4 & Se requiere proactividad por parte del asistente virtual & Cuando el usuario acceda el asistente virtual iniciará la conversación  & Se evita dejar al usuario el control de la conversación y se minimizan errores y/o pérdida del mismo  & A &  &  NU-2 \\ \hline
+RF-5 &  El asistente virutal debe ser personalizado & El asistente virtual identificará las respuestas de cada usuario y ofrecerá un flujo de conversación con cada uno en función de sus respuestas previas  & Los flujos de preguntas deben ser en función de cada posibilidad en el cuestionario & A & T - Realizar cuestionarios distiintos para comprobar los flujos de preguntas & NU-4 \\ \hline
+RF-6&  (Requisito crítico) El asistente virtual (el sistema) debe registrar las conversaciones & El sistema debe ser capaz de recoger datos de conversaciones y de usuarios  & Con estos datos, a futuro, el centro desea poder realizar un pequeño análisis y extraer conclusiones de las opiniones  & A &  & NU-8 \\ \hline
+\end{tabular}
+\caption{Primer nivel de la tabla de requisitos}
+\end{centering}
+\end{table}
+
+
+
+
+
+\begin{table}[ht]
+\begin{centering}
+\begin{tabular}{|l|>{\centering}p{0.12\textwidth}|>{\centering}p{0.16\textwidth}|>{\centering}p{0.16\textwidth}|>{\centering}p{0.03\textwidth}|>{\centering}p{0.03\textwidth}|p{3cm}|}
+\hline
+ID & Nombre del requisito & Descripción & Justificación & P & V & Metodología de verificación \\ \hline
+RR-0.1&  La comunicación debe ser privada entre el usuario y el asistente virtual & Cada comunicación es privada y unipersonal  &  & A & T & Realizar comunicaciones simultáneas para evitar que se filtren datos entre distintos usuarios \\ \hline
+RF-1.1 & Los usuarios podrán acceder e interactuar con el asistente mediante ordenador y dispositivos móviles & Los usuarios podrán acceder desde cualquier tipo de dispositivo al servicio web & & A & & \\ \hline
+RF-4.1&  Mensaje de bienvenida del asistente virtual e identificación del código o la procedencia del QR & Cuando el usuario accede al asistente, este emitirá un primer mensaje de bienvenida. A partir de aquí, el asistente virtual guiará la conversación  &  & M & T & Realizar una simulación y probar el asistente virtual con distintos códigos para comprobar su fiabilidad \\ \hline
+RF-4.2 &  Los usuarios podrán valorar el servicio del asistente mediante una rápida encuesta & A partir de la selección de un número de estrellas (entre 0 y 5) y un comentario opcional, los usuarios podrán valorar el asistente y su funcionalidad  &   &  &  & \\ \hline
+\end{tabular}
+\caption{Segundo nivel de la tabla de requisitos}
+\end{centering}
+\end{table}
+
+
+
+
+
+
+
